@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--配置springMVC自动扫描包controller层-->
+    <context:component-scan base-package="com.dr.crm.controller" ></context:component-scan>
+
+     <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/doLogin" />
+            <!--静态资源的配置-->
+                    <!--js  css 这些不用进行拦截
+                       login.html
+                    -->
+               <bean class="com.dr.crm.utils.MyHanderController">
+                  <property name="excludUrrls">
+                      <list>
+                          <value>/assets</value>
+                          <value>/login.jsp</value>
+                          <value>/doLogin</value>
+                          <!--登陆的Controller地址-->
+                      </list>
+                  </property>
+               </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    <!--开启注解版-->
+    <mvc:annotation-driven />
+        <!--开启默认的Hander-->
+    <mvc:default-servlet-handler />
+     <!-- 不需要通过跳转 就可以到那个页面-->
+    <mvc:view-controller path="/" view-name="login"></mvc:view-controller>
+    <!--配置放过静态的资源-->
+    <mvc:resources mapping="/assets/avatars/**" location="/assets/avatars/"></mvc:resources>
+    <mvc:resources mapping="/assets/bootstrap3css/**" location="/assets/bootstrap3css/"></mvc:resources>
+    <mvc:resources mapping="/assets/build/**" location="/assets/build/"></mvc:resources>
+    <mvc:resources mapping="/assets/css/**" location="/assets/css/"></mvc:resources>
+    <mvc:resources mapping="/assets/font/**" location="/assets/font/"></mvc:resources>
+    <mvc:resources mapping="/assets/images/**" location="/assets/images/"></mvc:resources>
+    <mvc:resources mapping="/assets/img/**" location="/assets/img/"></mvc:resources>
+    <mvc:resources mapping="/assets/js/**" location="/assets/js/"></mvc:resources>
+
+
+
+
+
+
+
+     <!--配置视图的解析器-->
+   <bean  id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+       <property name="prefix" value="/"></property>
+       <property name="suffix" value=".jsp"></property>
+   </bean>
+
+    <!--文件上传-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--字符集-->
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <!--文件上传的大小(总大小)-->
+        <property name="maxUploadSize" value="#{1024 * 1024 * 1024 * 6}"></property>
+        <!--文件每次上传的大小-->
+        <property name="maxUploadSizePerFile" value="#{1024 *  1024 * 3 }"></property>
+        <!--超过大小的时候就进行保存找磁盘(阀值)-->
+        <property name="maxInMemorySize" value="#{1024 *  1024 }" ></property>
+    </bean>
+
+
+    <!--配置JSON数据-->
+    <!--将字符串转换为json数据-->
+    <bean id="stringHttpMessage" class="org.springframework.http.converter.StringHttpMessageConverter">
+        <property name="supportedMediaTypes" >
+            <list>
+                <value>text/plain;charset=utf-8</value>
+                <value>text/json;charset=utf-8</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--将对象转为json数据-->
+    <bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    </bean>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="stringHttpMessage"></ref>
+                <ref bean="jsonConverter"></ref>
+            </list>
+        </property>
+
+    </bean>
+
+</beans>
