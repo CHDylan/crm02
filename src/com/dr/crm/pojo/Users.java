@@ -3,15 +3,15 @@ package com.dr.crm.pojo;
 public class Users {
 
     /**
-     *
+     *撒大声地
      */
     private  Integer id;
     /**
-     *
+     *阿萨德阿萨德
      */
     private  String name;
-    /**
-     *sssssssssssssssssssssssssssssssss
+    /**阿萨德
+     *啊实打实大阿萨德
      */
     private  String pwd;
 
